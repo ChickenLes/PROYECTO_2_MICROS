@@ -19,25 +19,25 @@ volatile uint8_t PUSH_FLAG = 0;
 // CONFIGURACIÓN DE INTERRUPCIONES
 //-------------------------------------------------
 void PIN_CHANGE_CONF(void) {
-	DDRC &= ~((1 << PC0) | (1 << PC1));
-	PORTC |= (1 << PC0) | (1 << PC1);
+	DDRC &= ~((1 << PINC0) | (1 << PINC1));
+	PORTC |= (1 << PINC0) | (1 << PINC1);
 	PCMSK1 |= (1 << PCINT8) | (1 << PCINT9);
 	PCICR |= (1 << PCIE1);
 	sei();
 }
 
 //-------------------------------------------------
-// RUTINA DE INTERRUPCIÓN MEJORADA
+// RUTINA DE INTERRUPCIÓN 
 //-------------------------------------------------
 ISR(PCINT1_vect) {
 	static uint8_t estado_anterior = 0xFF;
-	uint8_t estado_actual = PINC & ((1 << PC0) | (1 << PC1));
+	uint8_t estado_actual = PINC & ((1 << PINC0) | (1 << PINC1));
 	
 	if (estado_actual != estado_anterior) {
 		_delay_ms(20);  // Debounce físico
 		estado_anterior = estado_actual;
 		
-		if (!(PINC & (1 << PC0))) PUSH_FLAG = 1;
-		if (!(PINC & (1 << PC1))) PUSH_FLAG = 2;
+		if (!(PINC & (1 << PINC0))) PUSH_FLAG = 1;
+		if (!(PINC & (1 << PINC1))) PUSH_FLAG = 2;
 	}
 }
